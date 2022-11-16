@@ -51,11 +51,16 @@ def mse(a, b):
     return np.sum((a - b) ** 2, axis=0)
 
 
-def compute_eig_newton_identities(d, rho, scale=1000):
+def compute_eig_newton_identities(d, rho, scale=10000):
     # scale = 1000
     rhop = scale * rho
     coefs = compute_coefs(d, get_traces(rhop))
     poly = np.polynomial.polynomial.Polynomial(coefs[::-1])
-    newton_roots = np.real(poly.roots()) / scale
-    numpy_direct_roots = np.sort(np.real(np.linalg.eig(rho)[0]))
-    return mse(newton_roots, numpy_direct_roots)
+    roots_with_imaginary = poly.roots() / scale
+    if (np.imag(roots_with_imaginary) > 1e-8).any():
+        print(f"WARNING, dimension {d}")
+        return np.NaN
+    else:
+        newton_roots = np.sort(np.real(roots_with_imaginary))
+        numpy_direct_roots = np.sort(np.real(np.linalg.eig(rho)[0]))
+        return mse(newton_roots, numpy_direct_roots)
