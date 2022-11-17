@@ -3,6 +3,7 @@ import qutip as qu
 from numba import jit
 
 
+# @jit(nopython=True)
 def get_traces(rho):
     traces = []
     for i in range(rho.shape[0]):
