@@ -52,7 +52,7 @@ def mse(a, b):
     return np.sum((a - b) ** 2, axis=0)
 
 
-def compute_eig_newton_identities(d, rho, scale=10000):
+def compute_mse_eig_newton_identities(d, rho, scale=10000):
     # scale = 1000
     rhop = scale * rho
     coefs = compute_coefs(d, get_traces(rhop))
