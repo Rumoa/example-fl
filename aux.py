@@ -52,7 +52,7 @@ def mse(a, b):
     return np.sum((a - b) ** 2, axis=0)
 
 
-def compute_mse_eig_newton_identities(d, rho, scale=10000):
+def compute_mse_eig_newton_identities(d, rho, scale=10000, returnMSE=True):
     # scale = 1000
     rhop = scale * rho
     coefs = compute_coefs(d, get_traces(rhop))
@@ -64,4 +64,26 @@ def compute_mse_eig_newton_identities(d, rho, scale=10000):
     else:
         newton_roots = np.sort(np.real(roots_with_imaginary))
         numpy_direct_roots = np.sort(np.real(np.linalg.eig(rho)[0]))
-        return mse(newton_roots, numpy_direct_roots)
+        if returnMSE:
+            return mse(newton_roots, numpy_direct_roots)
+        else:
+            return newton_roots, numpy_direct_roots
+
+
+def compute_eig_F_L(d, rho, scale=10000):
+    # scale = 1000
+    rhop = scale * rho
+    coefs = compute_coefs(d, get_traces(rhop))
+    poly = np.polynomial.polynomial.Polynomial(coefs[::-1])
+    roots_with_imaginary = poly.roots() / scale
+    if (np.imag(roots_with_imaginary) > 1e-8).any():
+        print(f"WARNING, dimension {d}")
+
+    newton_roots = roots_with_imaginary
+    numpy_direct_roots = np.linalg.eig(rho)[0]
+
+    return np.sort_complex(newton_roots), np.sort_complex(numpy_direct_roots)
+    # if returnMSE:
+    #     return mse(newton_roots, numpy_direct_roots)
+    # else:
+    #     return newton_roots, numpy_direct_roots

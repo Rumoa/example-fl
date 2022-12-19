@@ -97,5 +97,5 @@ def single_generate_mse(rho, epsilon, dimension, noisy_samples=1000):
             ]
         )
         / noisy_samples
-    )
+    ) #aggregated all eigenvals
     return mse
